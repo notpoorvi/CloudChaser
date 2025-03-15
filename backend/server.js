@@ -29,6 +29,7 @@ app.post('/api/generate-steps', async (req, res) => {
             if (cleanedResponse.includes("'")) {
                 cleanedResponse = cleanedResponse.replace(/'/g, '"');
             }
+            console.log(cleanedResponse);
             const steps = JSON.parse(cleanedResponse);
 
             if (steps && Array.isArray(steps)) {
