@@ -30,15 +30,12 @@ Example: ["step1", "step2", ..., "step10"]`;
         console.log("Gemini Response:", cleanedResponse);
 
         try {
-<<<<<<< HEAD
-=======
             let cleanedResponse = responseText.replace(/```json\n|\n```/g, "").trim();
 
             if (cleanedResponse.includes("'")) {
                 cleanedResponse = cleanedResponse.replace(/'/g, '"');
             }
             console.log(cleanedResponse);
->>>>>>> 797436c4d6fbb8382d56e5693476763e7a92ae99
             const steps = JSON.parse(cleanedResponse);
 
             if (Array.isArray(steps)) {
