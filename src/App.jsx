@@ -29,6 +29,7 @@ function App() {
           <h1></h1>
         </main>
         <footer
+          className="mainFooter"
           style={{
             position: "fixed",
             bottom: "0",

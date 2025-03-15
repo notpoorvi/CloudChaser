@@ -73,12 +73,6 @@ body {
     }
 }
   
-@keyframes moveClouds {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+.mainFooter {
+    background: linear-gradient(135deg, rgba(59, 32, 99, 0.8) 0%, rgba(34, 25, 47, 0.8) 100%); 
 }
-  
