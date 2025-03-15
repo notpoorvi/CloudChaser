@@ -42,19 +42,6 @@ export default function RiveAnimation() {
     }
   );
 
-  // On larger viewports, display the entire artboard while maintaining aspect ratio
-  // On smaller viewports, cover the viewport with the artboard while maintaining aspect ratio
-  // which may crop certain parts of the artboard
-  useEffect(() => {
-    if (rive) {
-        rive!.layout = new Layout({
-          fit: Fit.Cover,
-          alignment: Alignment.Center,
-        });
-      }
-    }
-  );
-
   const numX = useStateMachineInput(rive, "State Machine 1", "numX", 50);
   const numY = useStateMachineInput(rive, "State Machine 1", "numY", 50);
   const numSize = useStateMachineInput(rive, "State Machine 1", "numSize", 0);
@@ -74,18 +61,13 @@ export default function RiveAnimation() {
 
   return (
     <div
-      className="bg-[#09090E] relative rive-canvas-container w-full h-full"
-      style={{ width: "100%", height: "100%" }}
-      ref={setContainerRef}
-      onMouseMove={onMouseMove}
     >
       <canvas
-        className="bg-[#09090E] rive-canvas block relative w-full h-full max-h-screen max-w-screen align-top"
+        className="rive-canvas w-full h-full"
         ref={setCanvasRef}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%",  objectFit: "cover"}}
         aria-label="Hero element for the Explore page; an interactive graphic showing planets thru a spacesuit visor"
       ></canvas>
-      <RiveButton />
     </div>
   );
 }
