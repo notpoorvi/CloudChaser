@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 
 function RoadmapPage() {
   const location = useLocation();
-  const { steps } = location.state || {};
+  const { steps, name } = location.state || {};
 
   if (!steps) {
     return <div>No steps found. Please go back and try again.</div>;
@@ -10,7 +10,7 @@ function RoadmapPage() {
 
   return (
     <div>
-      <h1>Your Roadmap</h1>
+      <h1>{name}'s Roadmap</h1>
       <ul>
         {steps.map((step, index) => (
           <li key={index}>{step}</li>
