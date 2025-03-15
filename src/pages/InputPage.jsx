@@ -40,7 +40,7 @@ function InputPage() {
       );
 
       // The server now returns already stringified JSON
-      const stepsArray = JSON.parse(response.data.steps);
+      const stepsArray = response.data.steps;
 
       setSteps(stepsArray);
       navigate("/roadmap", { state: { steps: stepsArray, name: name } });

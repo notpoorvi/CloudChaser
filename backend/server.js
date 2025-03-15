@@ -12,15 +12,22 @@ app.use(bodyParser.json());
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-
 app.post('/api/generate-steps', async (req, res) => {
     const { dream } = req.body;
 
-    const prompt = `Please generate no more than 10 steps to help the user achieve the following goal: ${dream}. Each step should be clear and actionable. Produce the result in an array format such as ['step1', 'step2', ...] with the length of the array being 10 at most. Don't apply any text formatting to any of the strings such as ** or anything extra. Start your response with the list, don't add any extra text in the response besides the list of steps.`;
+    const prompt = `Generate up to 10 steps to help achieve this goal: "${dream}". 
+Respond **only** in a valid JSON array format, nothing else. 
+Example: ["step1", "step2", ..., "step10"]`;
 
     try {
         const result = await model.generateContent(prompt);
-        const responseText = await result.response.text();
+        let responseText = await result.response.text();
+
+        let cleanedResponse = responseText.trim();
+        cleanedResponse = cleanedResponse.replace(/```json|```/g, "").trim(); // Remove markdown JSON formatting
+        cleanedResponse = cleanedResponse.replace(/'/g, '"');
+
+        console.log("Gemini Response:", cleanedResponse);
 
         try {
             let cleanedResponse = responseText.replace(/```json\n|\n```/g, "").trim();
@@ -28,23 +35,23 @@ app.post('/api/generate-steps', async (req, res) => {
             if (cleanedResponse.includes("'")) {
                 cleanedResponse = cleanedResponse.replace(/'/g, '"');
             }
+            console.log(cleanedResponse);
             const steps = JSON.parse(cleanedResponse);
 
-            if (steps && Array.isArray(steps)) {
-                res.json({ steps: JSON.stringify(steps) });
+            if (Array.isArray(steps)) {
+                res.json({ steps });
             } else {
-                res.status(400).json({ error: 'Failed to generate steps.' });
+                res.status(400).json({ error: 'Invalid JSON format from Gemini.' });
             }
         } catch (parseError) {
-            console.error('Error parsing the response:', parseError);
-            res.status(400).json({ error: 'Error parsing the response from Gemini.' });
+            console.error('JSON Parsing Error:', parseError, 'Response:', cleanedResponse);
+            res.status(400).json({ error: 'Error parsing Gemini response. Check logs for details.' });
         }
     } catch (error) {
-        console.error(error);
+        console.error('Gemini API Error:', error);
         res.status(500).json({ error: 'Server error while generating roadmap.' });
     }
 });
-
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
