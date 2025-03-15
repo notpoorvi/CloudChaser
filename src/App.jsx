@@ -5,7 +5,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Home from "./pages/Home";
-import Roadmap from "./pages/RoadMap";
+import RoadMap from "./pages/RoadMap";
 import InputPage from "./pages/InputPage";
 import "./App.css";
 import { useEffect } from "react";
@@ -49,7 +49,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/roadmap" element={<Roadmap />} />
+        <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/input" element={<InputPage />} />
       </Routes>
       <Footer />

@@ -26,8 +26,8 @@ export default function RiveAnimation() {
     container: canvasContainerRef,
   } = useRive(
     {
-      src: "/hero_use_case.riv",
-      artboard: "Hero Demo Listeners Resize",
+      src: "/cloudchaser.riv",
+      artboard: "artboard",
       stateMachines: "State Machine 1",
       layout: new Layout({
         fit: Fit.Cover,
