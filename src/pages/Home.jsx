@@ -42,11 +42,13 @@ function Home() {
         </p>
       </header>
 
-      <button onClick={handleClick}>
+      <button className="cloud-button" onClick={handleClick}>
         <div className="spline-container">
           <Spline 
             scene="https://prod.spline.design/uJtUTdrviADhJRWo/scene.splinecode"
-            style={{backgroundColor: "#3b2063"}}
+            style={{
+              backgroundColor: "#3b2063",
+            }}
           />
         </div>
       </button>
