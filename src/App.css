@@ -255,8 +255,9 @@ input[type="text"]:focus {
 
 .spline-container canvas {
     background-color: #3b2063;
-    width: 100%;
-    height: 100%;
+    width: 200%;
+    height: 200%;
+    transform: scale(1.2);
 }
 
 .cloud-button {
