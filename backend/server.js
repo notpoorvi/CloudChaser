@@ -16,7 +16,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 app.post('/api/generate-steps', async (req, res) => {
     const { goal } = req.body;
 
-    const prompt = `Please generate no more than 10 steps to help the user achieve the following goal: ${goal}. Each step should be clear and actionable. Produce the result in an array format such as ['step1', 'step2', ...] with the length of the array being 10 at most. Don't apply any text formatting to any of the strings such as ** or anything extra.`;
+    const prompt = `Please generate no more than 10 steps to help the user achieve the following goal: ${goal}. Each step should be clear and actionable. Produce the result in an array format such as ['step1', 'step2', ...] with the length of the array being 10 at most. Don't apply any text formatting to any of the strings such as ** or anything extra. Start your response with the list, don't add any extra text in the response besides the list of steps.`;
 
     try {
         const result = await model.generateContent(prompt);
@@ -24,6 +24,11 @@ app.post('/api/generate-steps', async (req, res) => {
 
         try {
             const cleanedResponse = responseText.replace(/```json\n|\n```/g, "").trim();
+
+            if (!cleanedResponse.startsWith("[")) {
+                cleanedResponse = cleanedResponse.replace(/'/g, '"');
+            }
+            console.log("Response Cleaned == ", cleanedResponse)
 
             const steps = JSON.parse(cleanedResponse);
 

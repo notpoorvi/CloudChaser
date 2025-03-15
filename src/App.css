@@ -1,7 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+html {
+    scroll-behavior: smooth;
+}  
+
 body {
     background: radial-gradient(circle at 50% 20%, #3b2063, #22192F);
     color: white;
-    font-family: "Inter", sans-serif;
+    font-family: "Space Mono", monospace;
     font-optical-sizing: auto;
     font-style: normal;
     min-height: 100vh;
@@ -59,7 +65,7 @@ body {
     font-weight: 300;
     letter-spacing: 1px;
     margin-top: 1rem;
-    animation: fadeIn 3s ease-out forwards;
+    animation: fadeIn 1s ease-out forwards;
 }
   
 @keyframes fadeIn {
@@ -75,4 +81,193 @@ body {
   
 .mainFooter {
     background: linear-gradient(135deg, rgba(59, 32, 99, 0.8) 0%, rgba(34, 25, 47, 0.8) 100%); 
+    animation: fadeIn2 1s ease-out forwards;
 }
+
+@keyframes fadeIn2 {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.home-button, .submit-button {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-family: "Space Mono", monospace;
+    color: #fff;
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.home-button:hover, .submit-button:hover {
+    background-color: #a8d0e6;
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+.home-button:active, .submit-button:active {
+    background-color: #7ec8e3;
+    transform: translateY(2px);
+}
+
+.home-button-text, .submit-button-text{
+    position: relative;
+    z-index: 2;
+}
+
+.home-button::before, .submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #ff9a9e, #f56ef3, #f2c4fa, #ff9a9e);
+    background-size: 300% 300%;
+    animation: dreamyGlow 6s ease infinite;
+    z-index: 1;
+}
+  
+@keyframes dreamyGlow {
+    0% {
+      background-position: 300% 0;
+    }
+    50% {
+      background-position: 0 100%;
+    }
+    100% {
+      background-position: 300% 0;
+    }
+}
+
+.input-header {
+    color: #ffff;  
+    font-family: 'Space Mono', monospace;  
+    font-size: 4rem;
+    font-weight: bold;
+    text-align: center;  
+    padding: 20px;
+    background-color: #5e3e91;
+    width: 100%;
+}
+
+h2 {
+    color: #ffffff;  
+    font-family: 'Space Mono', monospace;  
+    text-align: center;  
+}
+
+.input-main {
+    height: 100%;
+    margin: 5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: "Space Mono", monospace;
+    overflow: hidden;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(46, 5, 81, 0.8);
+    padding: 10vh 10vw;
+    border-radius: 8px;
+    height: 100vh;
+    width: 100vh;
+    box-sizing: border-box;
+}
+
+label {
+    font-size: 20px;
+    margin: 0;
+    color: white;
+    font-family: 'Space Mono', monospace;
+}
+
+input[type="text"] {
+    background-color: #fff;
+    color: #333;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    border-radius: 50px;
+    border: 2px solid #ccc;
+    width: 100%;
+    max-width: 400px;
+    margin: 10px 0;
+    transition: all 0.3s case;
+    align-items: center;
+}
+
+input[type="text"]:before,
+input[type="text"]:after {
+    content: "";
+    position: absolute;
+    background-color: #fff;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+input[type="text"]::before {
+    width: 60px;
+    height: 60px;
+    top: -20px;
+    left: -30px;
+}
+
+input[type="text"]::after {
+    width: 60px;
+    height: 60px;
+    top: -20px;
+    left: -30px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.spline-container {
+    width: 100vw;
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    overflow: hidden;
+}
+
+.spline-container canvas {
+    background-color: #3b2063;
+    /* width: 100%;
+    height: 100%; */
+}
+
+button {
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-items: center;
+    font-family: 'Space Mono', monospace;  
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: -4rem;
+    margin-left: -1rem;
+    width: 100%;
+} 
