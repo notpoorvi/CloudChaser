@@ -2,7 +2,7 @@ import "/src/App.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import Spline from '@splinetool/react-spline'
+import Spline from "@splinetool/react-spline";
 
 const InputPageButton = () => {
   const navigate = useNavigate();
@@ -27,7 +27,6 @@ const InputPageButton = () => {
 };
 
 function Home() {
-
   const navigate = useNavigate();
   const handleClick = () => {
     navigate("/input");
@@ -42,11 +41,11 @@ function Home() {
         </p>
       </header>
 
-      <button onClick={handleClick}>
+      <button className="cloud-button" onClick={handleClick}>
         <div className="spline-container">
-          <Spline 
+          <Spline
             scene="https://prod.spline.design/uJtUTdrviADhJRWo/scene.splinecode"
-            style={{backgroundColor: "#3b2063"}}
+            style={{ backgroundColor: "#3b2063" }}
           />
         </div>
       </button>
