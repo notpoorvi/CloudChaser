@@ -9,6 +9,7 @@ function InputPage() {
   const [dream, setDream] = useState("");
   const [steps, setSteps] = useState([]);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,23 +22,15 @@ function InputPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // try {
-    //   console.log("dream == ", dream);
-    //   const response = await axios.post(
-    //     "http://localhost:3001/api/generate-steps",
-    //     {
-    //       dream,
-    //     }
-    //   );
-    //   const cleanedResponse = response.data.steps
-    //     .replace(/```json\n|\n```/g, "")
-    //     .trim();
-    //   const stepsArray = JSON.parse(cleanedResponse);
-    //   setSteps(stepsArray);
-    //   navigate("/roadmap", { state: { steps: stepsArray } });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+
+    if (!dream) {
+      setError("Please enter your dream/goal");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
     try {
       const response = await axios.post(
         "http://localhost:3001/api/generate-steps",
@@ -45,13 +38,17 @@ function InputPage() {
           dream,
         }
       );
-      const cleanedResponse = response.data.steps
-        .replace(/```json\n|\n```/g, "")
-        .trim();
-      const stepsArray = JSON.parse(cleanedResponse);
+
+      // The server now returns already stringified JSON
+      const stepsArray = JSON.parse(response.data.steps);
+
       setSteps(stepsArray);
       navigate("/roadmap", { state: { steps: stepsArray, name: name } });
-    } catch {}
+    } catch (error) {
+      console.error("Error generating roadmap:", error);
+      setError("Failed to generate your roadmap. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -85,33 +82,18 @@ function InputPage() {
           />
         </div>
 
-        <button className="submit-button" onClick={handleSubmit}>
-          <span className="submit-button-text">Generate Your Roadmap</span>
+        <button
+          className="submit-button"
+          onClick={handleSubmit}
+          disabled={isLoading}
+        >
+          <span className="submit-button-text">
+            {isLoading ? "Generating..." : "Generate Your Roadmap"}
+          </span>
         </button>
 
-        {error && <div>{error}</div>}
-
-        <ul>
-          {steps.map((step, index) => (
-            <li key={index}>{step}</li>
-          ))}
-        </ul>
+        {error && <div className="error-message">{error}</div>}
       </div>
-      {/* <input
-        type="text"
-        placeholder="Enter your goal"
-        value={goal}
-        onChange={(e) => setGoal(e.target.value)}
-      />
-      <button onClick={handleDreamSubmit}>Generate Steps</button>
-
-      {error && <div>{error}</div>}
-
-      <ul>
-        {steps.map((step, index) => (
-          <li key={index}>{step}</li>
-        ))}
-      </ul> */}
     </>
   );
 }
