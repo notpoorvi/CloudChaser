@@ -16,36 +16,79 @@ app.post('/api/generate-steps', async (req, res) => {
     const { dream } = req.body;
 
     const prompt = `Generate up to 10 steps to help achieve this goal: "${dream}". 
-Respond **only** in a valid JSON array format, nothing else. 
+Respond only with a valid JSON array of strings. 
 Example: ["step1", "step2", ..., "step10"]`;
 
     try {
         const result = await model.generateContent(prompt);
-        let responseText = await result.response.text();
+        const responseText = await result.response.text();
+        console.log("Raw Gemini Response:", responseText);
 
+        // Clean the response text
         let cleanedResponse = responseText.trim();
-        cleanedResponse = cleanedResponse.replace(/```json|```/g, "").trim(); // Remove markdown JSON formatting
+
+        // Remove markdown code blocks if present
+        cleanedResponse = cleanedResponse.replace(/```(json)?\s*|\s*```/g, "").trim();
+
+        // Replace single quotes with double quotes for valid JSON
         cleanedResponse = cleanedResponse.replace(/'/g, '"');
 
-        console.log("Gemini Response:", cleanedResponse);
+        // Try to find a valid JSON array within the response
+        let jsonMatch = cleanedResponse.match(/\[.*\]/s);
+        if (jsonMatch) {
+            cleanedResponse = jsonMatch[0];
+        }
+
+        console.log("Cleaned Response:", cleanedResponse);
 
         try {
-            let cleanedResponse = responseText.replace(/```json\n|\n```/g, "").trim();
-
-            if (cleanedResponse.includes("'")) {
-                cleanedResponse = cleanedResponse.replace(/'/g, '"');
-            }
-            console.log(cleanedResponse);
+            // Parse the JSON
             const steps = JSON.parse(cleanedResponse);
 
             if (Array.isArray(steps)) {
-                res.json({ steps });
+                // Validate each step is a string
+                const validSteps = steps.filter(step => typeof step === 'string');
+
+                if (validSteps.length > 0) {
+                    return res.json({ steps: validSteps });
+                } else {
+                    return res.status(400).json({
+                        error: 'Invalid steps format from Gemini.',
+                        rawResponse: responseText
+                    });
+                }
             } else {
-                res.status(400).json({ error: 'Invalid JSON format from Gemini.' });
+                return res.status(400).json({
+                    error: 'Response is not an array.',
+                    rawResponse: responseText
+                });
             }
         } catch (parseError) {
-            console.error('JSON Parsing Error:', parseError, 'Response:', cleanedResponse);
-            res.status(400).json({ error: 'Error parsing Gemini response. Check logs for details.' });
+            console.error('JSON Parsing Error:', parseError);
+            console.error('Response text that caused error:', cleanedResponse);
+
+            // Fallback: try to extract steps manually if JSON parsing fails
+            try {
+                // Look for patterns like numbered lists or bullet points
+                const lines = responseText.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.match(/^\d+[\.\)]\s+.+/) || line.match(/^[-\*]\s+.+/))
+                    .map(line => line.replace(/^\d+[\.\)]\s+|^[-\*]\s+/, '').trim());
+
+                if (lines.length > 0) {
+                    return res.json({ steps: lines });
+                } else {
+                    return res.status(400).json({
+                        error: 'Could not parse response as JSON or extract steps.',
+                        rawResponse: responseText
+                    });
+                }
+            } catch (fallbackError) {
+                return res.status(400).json({
+                    error: 'Failed to parse Gemini response.',
+                    rawResponse: responseText
+                });
+            }
         }
     } catch (error) {
         console.error('Gemini API Error:', error);

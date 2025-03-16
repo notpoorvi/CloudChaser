@@ -184,8 +184,8 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgba(46, 5, 81, 0.8);
-    padding: 10vh 10vw;
+    /* background-color: rgba(46, 5, 81, 0.8); */
+    /* padding: 10vh 10vw; */
     border-radius: 8px;
     height: 100vh;
     width: 100vh;

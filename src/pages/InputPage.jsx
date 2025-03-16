@@ -7,9 +7,8 @@ function InputPage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [dream, setDream] = useState("");
-  const [steps, setSteps] = useState([]);
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -23,7 +22,7 @@ function InputPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!dream) {
+    if (!dream.trim()) {
       setError("Please enter your dream/goal");
       return;
     }
@@ -34,26 +33,47 @@ function InputPage() {
     try {
       const response = await axios.post(
         "http://localhost:3001/api/generate-steps",
-        {
-          dream,
-        }
+        { dream }
       );
 
-      // The server now returns already stringified JSON
-      const stepsArray = response.data.steps;
+      if (response.data && Array.isArray(response.data.steps)) {
+        const stepsArray = response.data.steps;
 
-      setSteps(stepsArray);
-      navigate("/roadmap", { state: { steps: stepsArray, name: name } });
+        // Validate that we have steps
+        if (stepsArray.length === 0) {
+          throw new Error(
+            "No steps were generated. Please try again with a different goal."
+          );
+        }
+
+        // Navigate to roadmap page with the steps and name
+        navigate("/roadmap", {
+          state: {
+            steps: stepsArray,
+            name: name.trim() || "Dreamer", // Default name if empty
+          },
+        });
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
       console.error("Error generating roadmap:", error);
-      setError("Failed to generate your roadmap. Please try again.");
+
+      // Handle different types of errors
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(`Error: ${error.response.data.error}`);
+      } else if (error.message) {
+        setError(`Error: ${error.message}`);
+      } else {
+        setError("Failed to generate your roadmap. Please try again.");
+      }
+
       setIsLoading(false);
     }
   };
 
   return (
     <>
-      <div className="soft-glow"></div>
       <header className="header">
         <h1>CloudChaser</h1>
         <p>
@@ -61,38 +81,40 @@ function InputPage() {
         </p>
       </header>
       <div className="input-main">
-        <div>
-          <label>ENTER YOUR NAME:</label>
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={handleChange}
-            name="username"
-          />
-        </div>
-        <div>
-          <label>ENTER YOUR DREAM:</label>
-          <input
-            type="text"
-            placeholder="I want to achieve..."
-            name="dream"
-            value={dream || ""}
-            onChange={handleChange}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="username">ENTER YOUR NAME:</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Name"
+              value={name}
+              onChange={handleChange}
+              name="username"
+            />
+          </div>
 
-        <button
-          className="submit-button"
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          <span className="submit-button-text">
-            {isLoading ? "Generating..." : "Generate Your Roadmap"}
-          </span>
-        </button>
+          <div className="input-group">
+            <label htmlFor="dream">ENTER YOUR DREAM:</label>
+            <input
+              type="text"
+              id="dream"
+              placeholder="I want to achieve..."
+              name="dream"
+              value={dream}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        {error && <div className="error-message">{error}</div>}
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            <span className="submit-button-text">
+              {isLoading ? "Generating..." : "Generate Your Roadmap"}
+            </span>
+          </button>
+
+          {error && <div className="error-message">{error}</div>}
+        </form>
       </div>
     </>
   );
